@@ -26,7 +26,8 @@ public class DatabaseService {
 
     public Boolean addEmployee(String identityNumber, String name, Integer roleId, Integer salary) {
         try {
-            String query = String.format("INSERT INTO employees (`id_number`, `name`, `role`, `salary`) VALUES ('%s', '%s', %d, %d)", identityNumber, name, roleId, salary);
+            String query = String.format("INSERT INTO employees (`id_number`, `name`, `role`, `salary`) " +
+                    "VALUES ('%s', '%s', %d, %d)", identityNumber, name, roleId, salary);
             return statement.executeUpdate(query) == 1;
         } catch (SQLException e) {
             e.printStackTrace();
