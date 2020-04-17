@@ -6,12 +6,16 @@
 package sh.now.arifikhsanudin.employeemanager.ui;
 
 import sh.now.arifikhsanudin.employeemanager.service.DatabaseService;
+import sh.now.arifikhsanudin.employeemanager.service.NotificationService;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Objects;
 
 /**
  * @author Arif Ikhsanudin
@@ -19,11 +23,14 @@ import java.sql.Statement;
 public class Main extends javax.swing.JFrame implements MainContract {
     Connection connection;
     Statement statement;
+    DatabaseService databaseService;
+    NotificationService notificationService;
 
-    public static final Integer NOMOR_INDUK_COLUMN = 0;
-    public static final Integer NAMA_COLUMN = 1;
-    public static final Integer JABATAN_COLUMN = 2;
-    public static final Integer GAJI_COLUMN = 3;
+    public static final Integer ID_COLUMN = 0;
+    public static final Integer NOMOR_INDUK_COLUMN = 1;
+    public static final Integer NAMA_COLUMN = 2;
+    public static final Integer JABATAN_COLUMN = 3;
+    public static final Integer GAJI_COLUMN = 4;
 
     /**
      * Creates new form Main
@@ -54,9 +61,9 @@ public class Main extends javax.swing.JFrame implements MainContract {
         textFieldGaji = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         comboBoxJabatan = new javax.swing.JComboBox<>();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        buttonUpdateEmployee = new javax.swing.JButton();
+        buttonRemoveEmployee = new javax.swing.JButton();
+        buttonAddEmployee = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,14 +75,14 @@ public class Main extends javax.swing.JFrame implements MainContract {
 
             },
             new String [] {
-                "Nomor Induk", "Nama", "Jabatan", "Gaji"
+                "Id", "Nomor Induk", "Nama", "Jabatan", "Gaji"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -86,13 +93,16 @@ public class Main extends javax.swing.JFrame implements MainContract {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(employeeTable);
-
-        textFieldNomorInduk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textFieldNomorIndukActionPerformed(evt);
+        employeeTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                employeeTableMouseClicked(evt);
             }
         });
+        jScrollPane1.setViewportView(employeeTable);
+        if (employeeTable.getColumnModel().getColumnCount() > 0) {
+            employeeTable.getColumnModel().getColumn(0).setResizable(false);
+            employeeTable.getColumnModel().getColumn(4).setResizable(false);
+        }
 
         jLabel2.setText("Nomor Induk");
 
@@ -104,25 +114,25 @@ public class Main extends javax.swing.JFrame implements MainContract {
 
         comboBoxJabatan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Manager", "Supervisor", "Staff" }));
 
-        jButton2.setText("Update");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        buttonUpdateEmployee.setText("Update");
+        buttonUpdateEmployee.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                buttonUpdateEmployeeActionPerformed(evt);
             }
         });
 
-        jButton3.setForeground(new java.awt.Color(255, 0, 0));
-        jButton3.setText("PHK");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        buttonRemoveEmployee.setForeground(new java.awt.Color(255, 0, 0));
+        buttonRemoveEmployee.setText("PHK");
+        buttonRemoveEmployee.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                buttonRemoveEmployeeActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Tambah Karyawan");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        buttonAddEmployee.setText("Tambah Karyawan");
+        buttonAddEmployee.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                buttonAddEmployeeActionPerformed(evt);
             }
         });
 
@@ -158,9 +168,9 @@ public class Main extends javax.swing.JFrame implements MainContract {
                                             .addComponent(textFieldNomorInduk))))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                    .addComponent(buttonAddEmployee, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(buttonUpdateEmployee, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(buttonRemoveEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(36, 36, 36)
                         .addComponent(jLabel1)))
@@ -191,11 +201,11 @@ public class Main extends javax.swing.JFrame implements MainContract {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(textFieldGaji, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5)
-                            .addComponent(jButton3)))
+                            .addComponent(buttonRemoveEmployee)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton4)
+                        .addComponent(buttonAddEmployee)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2)
+                        .addComponent(buttonUpdateEmployee)
                         .addGap(58, 58, 58)))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
@@ -203,21 +213,49 @@ public class Main extends javax.swing.JFrame implements MainContract {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void buttonUpdateEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonUpdateEmployeeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_buttonUpdateEmployeeActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void buttonRemoveEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRemoveEmployeeActionPerformed
+        int selectedRow = employeeTable.getSelectedRow();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) employeeTable.getModel();
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+        Integer employeeId = Integer.valueOf(defaultTableModel.getValueAt(selectedRow, ID_COLUMN).toString());
+        if (databaseService.removeEmployee(employeeId)) {
+            populateView();
+        } else {
+            notificationService.showDialog("Gagal mem-PHK-karyawan.");
+        }
+    }//GEN-LAST:event_buttonRemoveEmployeeActionPerformed
 
-    private void textFieldNomorIndukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldNomorIndukActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textFieldNomorIndukActionPerformed
+    private void buttonAddEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddEmployeeActionPerformed
+        String inputIdentityNumber = textFieldNomorInduk.getText();
+        String inputName = textFieldNama.getText();
+        Integer inputRole = getRoleId(Objects.requireNonNull(comboBoxJabatan.getSelectedItem()).toString());
+        Integer inputSalary = Integer.valueOf(textFieldGaji.getText());
+        Boolean insert = databaseService.addEmployee(inputIdentityNumber, inputName, inputRole, inputSalary);
+        if (insert) {
+            notificationService.showDialog("Gagal menerima karyawan baru.");
+        } else {
+            populateView();
+        }
+    }//GEN-LAST:event_buttonAddEmployeeActionPerformed
+
+    private void employeeTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_employeeTableMouseClicked
+        int selectedRow = employeeTable.getSelectedRow();
+        TableModel employeeTableModel = employeeTable.getModel();
+
+        String idNumber = employeeTableModel.getValueAt(selectedRow, NOMOR_INDUK_COLUMN).toString();
+        String name = employeeTableModel.getValueAt(selectedRow, NAMA_COLUMN).toString();
+        String role = employeeTableModel.getValueAt(selectedRow, JABATAN_COLUMN).toString();
+        String salary = employeeTableModel.getValueAt(selectedRow, GAJI_COLUMN).toString();
+
+        textFieldNomorInduk.setText(idNumber);
+        textFieldNama.setText(name);
+        comboBoxJabatan.setSelectedItem(role);
+        textFieldGaji.setText(salary);
+    }//GEN-LAST:event_employeeTableMouseClicked
 
     /**
      * @param args the command line arguments
@@ -255,11 +293,11 @@ public class Main extends javax.swing.JFrame implements MainContract {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonAddEmployee;
+    private javax.swing.JButton buttonRemoveEmployee;
+    private javax.swing.JButton buttonUpdateEmployee;
     private javax.swing.JComboBox<String> comboBoxJabatan;
     private javax.swing.JTable employeeTable;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -274,7 +312,7 @@ public class Main extends javax.swing.JFrame implements MainContract {
 
     @Override
     public void initDatabase() {
-        DatabaseService databaseService = new DatabaseService();
+        databaseService = new DatabaseService();
         databaseService.config();
         connection = databaseService.connection;
         statement = databaseService.statement;
@@ -282,15 +320,18 @@ public class Main extends javax.swing.JFrame implements MainContract {
 
     @Override
     public void populateView() {
+        notificationService = new NotificationService();
         ResultSet employeeResultSet;
-
+        DefaultTableModel table = (DefaultTableModel) employeeTable.getModel();
+        table.setRowCount(0);
         try {
-            employeeResultSet = statement.executeQuery("SELECT * from employees");
+            employeeResultSet = databaseService.showAll();
             while (employeeResultSet.next()) {
                 Object[] employeeRow = {
+                        employeeResultSet.getString("id"),
                         employeeResultSet.getString("id_number"),
                         employeeResultSet.getString("name"),
-                        getRole(employeeResultSet.getString("role")),
+                        getRoleName(employeeResultSet.getString("role")),
                         employeeResultSet.getString("salary"),
                 };
                 DefaultTableModel defaultTableModel = (DefaultTableModel) employeeTable.getModel();
@@ -301,7 +342,7 @@ public class Main extends javax.swing.JFrame implements MainContract {
         }
     }
 
-    private String getRole(String roleId) {
+    private String getRoleName(String roleId) {
         switch (roleId) {
             case "1":
                 return "Manager";
@@ -311,6 +352,19 @@ public class Main extends javax.swing.JFrame implements MainContract {
                 return "Staff";
             default:
                 return "";
+        }
+    }
+
+    private Integer getRoleId(String role) {
+        switch (role) {
+            case "Manager":
+                return 1;
+            case "Supervisor":
+                return 2;
+            case "Staff":
+                return 3;
+            default:
+                return 0;
         }
     }
 }

@@ -5,11 +5,10 @@
  */
 package sh.now.arifikhsanudin.employeemanager.service;
 
+import com.sun.net.httpserver.Authenticator;
+
 import javax.swing.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  *
@@ -26,6 +25,35 @@ public class DatabaseService {
             statement = connection.createStatement();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+
+    public Boolean addEmployee(String identityNumber, String name, Integer roleId, Integer salary) {
+        try {
+            String query = String.format("INSERT INTO employees (`id_number`, `name`, `role`, `salary`) VALUES ('%s', '%s', %d, %d)", identityNumber, name, roleId, salary);
+            return statement.executeUpdate(query) == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Boolean removeEmployee(Integer id) {
+        try {
+            String query = String.format("DELETE FROM employees WHERE id = %d", id);
+            return statement.executeUpdate(query) == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ResultSet showAll() {
+        try {
+            return statement.executeQuery("SELECT * from employees");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
