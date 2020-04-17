@@ -56,4 +56,14 @@ public class DatabaseService {
             throw new RuntimeException(e);
         }
     }
+
+    public Boolean updateEmployee(Integer id, String idNumber, String name, Integer roleId, Integer salary) {
+        try {
+            String query = String.format("UPDATE employees SET `id_number` = '%s', `name` = '%s', `role` = %d, `salary` = %d WHERE id = %d", idNumber, name, roleId, salary, id);
+            return statement.executeUpdate(query) == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 }

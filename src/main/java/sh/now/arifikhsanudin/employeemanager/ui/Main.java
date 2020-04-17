@@ -214,7 +214,21 @@ public class Main extends javax.swing.JFrame implements MainContract {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonUpdateEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonUpdateEmployeeActionPerformed
-        // TODO add your handling code here:
+        int selectedRow = employeeTable.getSelectedRow();
+        TableModel employeeTableModel = employeeTable.getModel();
+
+        Integer id = Integer.valueOf(employeeTableModel.getValueAt(selectedRow, ID_COLUMN).toString());
+        String idNumber = employeeTableModel.getValueAt(selectedRow, NOMOR_INDUK_COLUMN).toString();
+        String name = employeeTableModel.getValueAt(selectedRow, NAMA_COLUMN).toString();
+        Integer roleId = getRoleId(employeeTableModel.getValueAt(selectedRow, JABATAN_COLUMN).toString());
+        Integer salary = Integer.valueOf(employeeTableModel.getValueAt(selectedRow, GAJI_COLUMN).toString());
+
+        if (databaseService.updateEmployee(id, idNumber, name, roleId, salary)) {
+            populateView();
+        } else {
+            notificationService.showDialog("Gagal update data karyawan.");
+        }
+
     }//GEN-LAST:event_buttonUpdateEmployeeActionPerformed
 
     private void buttonRemoveEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRemoveEmployeeActionPerformed
@@ -255,6 +269,9 @@ public class Main extends javax.swing.JFrame implements MainContract {
         textFieldNama.setText(name);
         comboBoxJabatan.setSelectedItem(role);
         textFieldGaji.setText(salary);
+
+        buttonUpdateEmployee.setEnabled(true);
+        buttonRemoveEmployee.setEnabled(true);
     }//GEN-LAST:event_employeeTableMouseClicked
 
     /**
