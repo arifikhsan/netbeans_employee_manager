@@ -5,13 +5,10 @@
  */
 package sh.now.arifikhsanudin.employeemanager.service;
 
-import com.sun.net.httpserver.Authenticator;
-
 import javax.swing.*;
 import java.sql.*;
 
 /**
- *
  * @author Arif Ikhsanudin
  */
 public class DatabaseService {
@@ -59,7 +56,11 @@ public class DatabaseService {
 
     public Boolean updateEmployee(Integer id, String idNumber, String name, Integer roleId, Integer salary) {
         try {
-            String query = String.format("UPDATE employees SET `id_number` = '%s', `name` = '%s', `role` = %d, `salary` = %d WHERE id = %d", idNumber, name, roleId, salary, id);
+//            UPDATE `employees` SET `name`= 'aaaa' WHERE id = 24
+            String query = String.format("UPDATE `employees` SET " +
+                    "`id_number` = '%s', `name` = '%s', `role` = %d, `salary` = %d " +
+                    "WHERE id = %d", idNumber, name, roleId, salary, id);
+            System.out.println(query);
             return statement.executeUpdate(query) == 1;
         } catch (SQLException e) {
             e.printStackTrace();

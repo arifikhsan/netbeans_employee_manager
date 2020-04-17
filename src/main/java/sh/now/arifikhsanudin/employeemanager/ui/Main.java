@@ -115,6 +115,7 @@ public class Main extends javax.swing.JFrame implements MainContract {
         comboBoxJabatan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Manager", "Supervisor", "Staff" }));
 
         buttonUpdateEmployee.setText("Update");
+        buttonUpdateEmployee.setEnabled(false);
         buttonUpdateEmployee.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonUpdateEmployeeActionPerformed(evt);
@@ -123,6 +124,7 @@ public class Main extends javax.swing.JFrame implements MainContract {
 
         buttonRemoveEmployee.setForeground(new java.awt.Color(255, 0, 0));
         buttonRemoveEmployee.setText("PHK");
+        buttonRemoveEmployee.setEnabled(false);
         buttonRemoveEmployee.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonRemoveEmployeeActionPerformed(evt);
@@ -218,12 +220,13 @@ public class Main extends javax.swing.JFrame implements MainContract {
         TableModel employeeTableModel = employeeTable.getModel();
 
         Integer id = Integer.valueOf(employeeTableModel.getValueAt(selectedRow, ID_COLUMN).toString());
-        String idNumber = employeeTableModel.getValueAt(selectedRow, NOMOR_INDUK_COLUMN).toString();
-        String name = employeeTableModel.getValueAt(selectedRow, NAMA_COLUMN).toString();
-        Integer roleId = getRoleId(employeeTableModel.getValueAt(selectedRow, JABATAN_COLUMN).toString());
-        Integer salary = Integer.valueOf(employeeTableModel.getValueAt(selectedRow, GAJI_COLUMN).toString());
+        String idNumber = textFieldNomorInduk.getText();
+        String name = textFieldNama.getText();
+        Integer roleId = getRoleId(Objects.requireNonNull(comboBoxJabatan.getSelectedItem()).toString());
+        Integer salary = Integer.valueOf(textFieldGaji.getText());
 
-        if (databaseService.updateEmployee(id, idNumber, name, roleId, salary)) {
+        Boolean update = databaseService.updateEmployee(id, idNumber, name, roleId, salary);
+        if (update) {
             populateView();
         } else {
             notificationService.showDialog("Gagal update data karyawan.");
@@ -237,6 +240,7 @@ public class Main extends javax.swing.JFrame implements MainContract {
 
         Integer employeeId = Integer.valueOf(defaultTableModel.getValueAt(selectedRow, ID_COLUMN).toString());
         if (databaseService.removeEmployee(employeeId)) {
+            notificationService.showDialog("Ter-PHK.");
             populateView();
         } else {
             notificationService.showDialog("Gagal mem-PHK-karyawan.");
@@ -250,9 +254,9 @@ public class Main extends javax.swing.JFrame implements MainContract {
         Integer inputSalary = Integer.valueOf(textFieldGaji.getText());
         Boolean insert = databaseService.addEmployee(inputIdentityNumber, inputName, inputRole, inputSalary);
         if (insert) {
-            notificationService.showDialog("Gagal menerima karyawan baru.");
-        } else {
             populateView();
+        } else {
+            notificationService.showDialog("Gagal menerima karyawan baru.");
         }
     }//GEN-LAST:event_buttonAddEmployeeActionPerformed
 
