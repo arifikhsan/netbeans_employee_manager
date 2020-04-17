@@ -17,7 +17,6 @@ public class DatabaseService {
 
     public void config() {
         try {
-            System.out.println("Congrats - Seems your MySQL JDBC Driver Registered!");
             connection = DriverManager.getConnection("jdbc:mysql://localhost/netbeans_employee_manager", "root", "");
             statement = connection.createStatement();
         } catch (SQLException e) {
@@ -56,7 +55,6 @@ public class DatabaseService {
 
     public Boolean updateEmployee(Integer id, String idNumber, String name, Integer roleId, Integer salary) {
         try {
-//            UPDATE `employees` SET `name`= 'aaaa' WHERE id = 24
             String query = String.format("UPDATE `employees` SET " +
                     "`id_number` = '%s', `name` = '%s', `role` = %d, `salary` = %d " +
                     "WHERE id = %d", idNumber, name, roleId, salary, id);
