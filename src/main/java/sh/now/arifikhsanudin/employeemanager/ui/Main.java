@@ -67,6 +67,8 @@ public class Main extends javax.swing.JFrame implements MainContract {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuItemExit = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        menuItemVersion = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -152,6 +154,18 @@ public class Main extends javax.swing.JFrame implements MainContract {
         jMenu1.add(menuItemExit);
 
         jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Help");
+
+        menuItemVersion.setText("Version");
+        menuItemVersion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemVersionActionPerformed(evt);
+            }
+        });
+        jMenu2.add(menuItemVersion);
+
+        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -299,6 +313,10 @@ public class Main extends javax.swing.JFrame implements MainContract {
         System.exit(0);
     }//GEN-LAST:event_menuItemExitActionPerformed
 
+    private void menuItemVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemVersionActionPerformed
+        JOptionPane.showMessageDialog(menuItemVersion, "Versi 1.0.0");
+    }//GEN-LAST:event_menuItemVersionActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -346,9 +364,11 @@ public class Main extends javax.swing.JFrame implements MainContract {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenuItem menuItemExit;
+    private javax.swing.JMenuItem menuItemVersion;
     private javax.swing.JTextField textFieldGaji;
     private javax.swing.JTextField textFieldNama;
     private javax.swing.JTextField textFieldNomorInduk;
